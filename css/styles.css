@@ -2,14 +2,19 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+html {
+    font-size: 16px;
 }
 
 body {
     background: linear-gradient(135deg, #1a1a2e, #16213e);
     min-height: 100vh;
     color: #fff;
-    padding: 20px;
+    padding: 16px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .container {
@@ -20,7 +25,7 @@ body {
 h1 {
     text-align: center;
     margin-bottom: 20px;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 .perfiles {
@@ -31,14 +36,19 @@ h1 {
 
 .perfil-btn {
     flex: 1;
-    padding: 15px;
+    padding: 14px 10px;
     border: 2px solid #4a4a6a;
     background: #2a2a4a;
     color: #fff;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
     transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .perfil-btn.active {
@@ -54,17 +64,18 @@ h1 {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 input, select {
     width: 100%;
-    padding: 12px;
+    padding: 14px 12px;
     border: 2px solid #4a4a6a;
     background: #2a2a4a;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
+    -webkit-appearance: none;
 }
 
 input:focus, select:focus {
@@ -72,44 +83,60 @@ input:focus, select:focus {
     border-color: #00d9ff;
 }
 
+input::placeholder {
+    color: #6a6a8a;
+}
+
 .btn-agregar {
     width: 100%;
-    padding: 14px;
+    padding: 16px;
     background: linear-gradient(135deg, #00d9ff, #0099cc);
     border: none;
     color: #1a1a2e;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 1rem;
-    transition: transform 0.2s;
+    font-size: 1.1rem;
+    transition: transform 0.2s, opacity 0.2s;
 }
 
 .btn-agregar:active {
     transform: scale(0.98);
+    opacity: 0.9;
 }
 
 .resumen {
     display: flex;
     justify-content: space-between;
     margin: 20px 0;
-    padding: 15px;
+    padding: 12px;
     background: #2a2a4a;
     border-radius: 12px;
+    gap: 8px;
 }
 
 .resumen-item {
     text-align: center;
+    flex: 1;
+    padding: 8px 4px;
 }
 
-.resumen-item span {
+.resumen-item > span {
     display: block;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    color: #8a8aaa;
+    margin-bottom: 4px;
+}
+
+.resumen-item div {
+    font-size: 0.7rem;
     color: #8a8aaa;
 }
 
 .resumen-item strong {
-    font-size: 1.3rem;
+    font-size: 1rem;
+    display: block;
+    margin-top: 2px;
 }
 
 .gastos-lista {
@@ -120,9 +147,9 @@ input:focus, select:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
+    padding: 14px 12px;
     background: #2a2a4a;
-    border-radius: 8px;
+    border-radius: 10px;
     margin-bottom: 8px;
     animation: slideIn 0.3s ease;
 }
@@ -134,21 +161,29 @@ input:focus, select:focus {
 
 .gasto-info {
     flex: 1;
+    min-width: 0;
 }
 
 .gasto-nombre {
     font-weight: 500;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .gasto-fecha {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #8a8aaa;
+    margin-top: 2px;
 }
 
 .gasto-monto {
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     color: #ff6b6b;
+    white-space: nowrap;
+    margin-left: 8px;
 }
 
 .gasto-monto.ingreso {
@@ -159,15 +194,17 @@ input:focus, select:focus {
     background: #ff4757;
     border: none;
     color: #fff;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-left: 10px;
+    margin-left: 8px;
+    font-size: 1rem;
+    line-height: 1;
 }
 
 .alarm-config {
     background: #2a2a4a;
-    padding: 15px;
+    padding: 14px;
     border-radius: 12px;
     margin-bottom: 20px;
 }
@@ -181,26 +218,105 @@ input:focus, select:focus {
     display: block;
     margin-bottom: 8px;
     color: #8a8aaa;
+    font-size: 0.9rem;
 }
 
 .alarm-btn {
-    padding: 10px 20px;
+    padding: 12px 20px;
     background: #ff6b9d;
     border: none;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     margin-top: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    width: 100%;
 }
 
 .alarm-status {
     margin-top: 10px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #6bff8a;
 }
 
 .empty {
     text-align: center;
     color: #8a8aaa;
-    padding: 30px;
+    padding: 40px 20px;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 380px) {
+    body {
+        padding: 12px;
+    }
+    
+    h1 {
+        font-size: 1.3rem;
+    }
+    
+    .perfil-btn {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+    }
+    
+    .resumen-item strong {
+        font-size: 0.85rem;
+    }
+    
+    .gasto-item {
+        padding: 12px 10px;
+    }
+    
+    .gasto-nombre {
+        font-size: 0.85rem;
+    }
+    
+    .gasto-monto {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 600px) {
+    body {
+        padding: 30px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    .container {
+        max-width: 550px;
+    }
+    
+    .perfil-btn {
+        padding: 18px;
+        font-size: 1.1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 16px;
+    }
+    
+    input, select {
+        padding: 16px;
+    }
+    
+    .resumen {
+        padding: 20px;
+    }
+    
+    .resumen-item strong {
+        font-size: 1.3rem;
+    }
+}
+
+input[type="time"] {
+    padding-right: 40px;
+}
+
+input[type="date"] {
+    padding-right: 40px;
 }
