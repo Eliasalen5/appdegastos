@@ -1,27 +1,15 @@
-// Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyB-XVV-cNS8YGCeR_DaohbngUE1pyALhtw",
-    authDomain: "app-gastos-b153f.firebaseapp.com",
-    projectId: "app-gastos-b153f",
-    storageBucket: "app-gastos-b153f.firebasestorage.app",
-    messagingSenderId: "828630647054",
-    appId: "1:828630647054:web:aa4d0135a6ab904176575f"
-};
-
-console.log('Inicializando Firebase...');
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const gastosCollection = db.collection('gastos');
-
-console.log('Firebase inicializado');
+// App con localStorage (sin Firebase por ahora)
 
 let perfilActual = 'elias';
-let gastos = [];
+let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
 // Inicializar
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-console.log('Fecha inicializada');
+
+// Guardar en localStorage
+function guardarGastos() {
+    localStorage.setItem('gastos', JSON.stringify(gastos));
+}
 
 // Cambiar perfil
 function selectPerfil(perfil) {
@@ -33,7 +21,7 @@ function selectPerfil(perfil) {
 }
 
 // Agregar gasto
-async function agregarGasto() {
+function agregarGasto() {
     console.log('Agregando gasto...');
     const descripcion = document.getElementById('descripcion').value.trim();
     const monto = parseFloat(document.getElementById('monto').value);
@@ -57,19 +45,24 @@ async function agregarGasto() {
     };
 
     console.log('Gasto:', gasto);
-    
-    await gastosCollection.add(gasto);
-    console.log('Gasto agregado a Firebase');
+    gastos.push(gasto);
+    guardarGastos();
     
     document.getElementById('descripcion').value = '';
     document.getElementById('monto').value = '';
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    
+    renderGastos();
+    actualizarResumen();
 }
 
 // Eliminar gasto
-async function eliminarGasto(id) {
+function eliminarGasto(id) {
     console.log('Eliminando gasto:', id);
-    await gastosCollection.doc(id).delete();
+    gastos = gastos.filter(g => g.id !== id);
+    guardarGastos();
+    renderGastos();
+    actualizarResumen();
 }
 
 // Renderizar lista de gastos
@@ -121,16 +114,8 @@ function actualizarResumen() {
     document.getElementById('totalNadia').style.color = nadia >= 0 ? '#6bff8a' : '#ff6b6b';
 }
 
-// Sincronización en Tiempo Real
-console.log('Conectando a Firebase...');
-gastosCollection.orderBy('id', 'desc').onSnapshot((snapshot) => {
-    console.log('Datos recibidos de Firebase:', snapshot.docs.length);
-    gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderGastos();
-    actualizarResumen();
-}, (error) => {
-    console.error('Error de Firebase:', error);
-    alert('Error de Firebase: ' + error.message);
-});
+// Inicializar
+renderGastos();
+actualizarResumen();
 
 console.log('App iniciada correctamente');
