@@ -2,18 +2,27 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Generar Iconos</title>
+    <title>Generar Iconos PWA</title>
 </head>
-<body>
-    <canvas id="c192" width="192" height="192"></canvas>
-    <canvas id="c512" width="512" height="512"></canvas>
+<body style="background:#1a1a2e;color:#fff;text-align:center;padding:20px;font-family:sans-serif">
+    <h2>📱 Generador de Iconos</h2>
+    <p>Hacé click derecho en cada imagen > "Guardar imagen como"</p>
+    <p>Guardá como: <b>icon-192.png</b> y <b>icon-512.png</b></p>
+    <br>
+    <h3>192x192</h3>
+    <canvas id="c192" width="192" height="192" style="border:2px solid #00d9ff;border-radius:20px"></canvas>
+    <br><br>
+    <h3>512x512</h3>
+    <canvas id="c512" width="512" height="512" style="border:2px solid #00d9ff;border-radius:40px"></canvas>
     <script>
         function draw(canvas, size) {
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#1a1a2e';
-            ctx.fillRect(0, 0, size, size);
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, size * 0.15);
+            ctx.fill();
             ctx.fillStyle = '#00d9ff';
-            ctx.font = size * 0.5 + 'px Arial';
+            ctx.font = `bold ${size * 0.5}px sans-serif`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('💰', size/2, size/2);
@@ -21,6 +30,5 @@
         draw(document.getElementById('c192'), 192);
         draw(document.getElementById('c512'), 512);
     </script>
-    <p>Click derecho en cada canvas > "Guardar imagen como" > icon-192.png y icon-512.png</p>
 </body>
 </html>
