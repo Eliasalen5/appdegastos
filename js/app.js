@@ -1,5 +1,7 @@
+import { subscribeToGastos, agregarGasto as agregarGastoFirebase, eliminarGasto as eliminarGastoFirebase } from './js/firebase.js';
+
 let perfilActual = 'elias';
-let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+let gastos = [];
 let alarmaActiva = false;
 let alarmTimeout = null;
 
@@ -10,7 +12,7 @@ function selectPerfil(perfil) {
     renderGastos();
 }
 
-function agregarGasto() {
+async function agregarGasto() {
     const descripcion = document.getElementById('descripcion').value.trim();
     const monto = parseFloat(document.getElementById('monto').value);
     const tipo = document.getElementById('tipo').value;
@@ -23,7 +25,7 @@ function agregarGasto() {
     }
 
     const gasto = {
-        id: Date.now(),
+        id: Date.now().toString(),
         perfil: perfilActual,
         descripcion,
         monto: tipo === 'ingreso' ? Math.abs(monto) : -Math.abs(monto),
@@ -32,22 +34,15 @@ function agregarGasto() {
         fecha: fechaInput ? new Date(fechaInput).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES')
     };
 
-    gastos.push(gasto);
-    localStorage.setItem('gastos', JSON.stringify(gastos));
+    await agregarGastoFirebase(gasto);
     
     document.getElementById('descripcion').value = '';
     document.getElementById('monto').value = '';
     document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-    
-    renderGastos();
-    actualizarResumen();
 }
 
-function eliminarGasto(id) {
-    gastos = gastos.filter(g => g.id !== id);
-    localStorage.setItem('gastos', JSON.stringify(gastos));
-    renderGastos();
-    actualizarResumen();
+async function eliminarGasto(id) {
+    await eliminarGastoFirebase(id);
 }
 
 function renderGastos() {
@@ -60,7 +55,7 @@ function renderGastos() {
     }
 
     lista.innerHTML = gastosPerfil
-        .sort((a, b) => b.id - a.id)
+        .sort((a, b) => parseInt(b.id) - parseInt(a.id))
         .map(g => `
             <div class="gasto-item">
                 <div class="gasto-info">
@@ -70,7 +65,7 @@ function renderGastos() {
                 <div class="gasto-monto ${g.tipo === 'ingreso' ? 'ingreso' : ''}">
                     ${g.tipo === 'ingreso' ? '+' : ''}$${Math.abs(g.monto).toFixed(2)}
                 </div>
-                <button class="btn-eliminar" onclick="eliminarGasto(${g.id})">×</button>
+                <button class="btn-eliminar" onclick="eliminarGasto('${g.id}')">×</button>
             </div>
         `).join('');
 }
@@ -216,8 +211,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('Las notificaciones están bloqueadas. Por favor habilítalas en Configuración > Safari > Permisos');
     }
     
-    renderGastos();
-    actualizarResumen();
+    subscribeToGastos((data) => {
+        gastos = data;
+        renderGastos();
+        actualizarResumen();
+    });
     
     const savedAlarm = localStorage.getItem('alarmTime');
     if (savedAlarm) {
@@ -227,36 +225,3 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 });
-
-async function requestNotificationPermission() {
-    if ('Notification' in window && Notification.permission === 'default') {
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') {
-            console.log('Notificaciones permitidas');
-        }
-    }
-    
-    if ('Notification' in window && Notification.permission === 'granted') {
-        try {
-            const registration = await navigator.serviceWorker.ready;
-            const subscription = await registration.pushManager.subscribe({
-                userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array('BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U')
-            });
-            localStorage.setItem('pushSubscription', JSON.stringify(subscription));
-        } catch (e) {
-            console.log('Push subscription error:', e);
-        }
-    }
-}
-
-function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-    const rawData = window.atob(base64);
-    const outputArray = new Uint8Array(rawData.length);
-    for (let i = 0; i < rawData.length; ++i) {
-        outputArray[i] = rawData.charCodeAt(i);
-    }
-    return outputArray;
-}
