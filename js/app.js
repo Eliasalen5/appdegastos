@@ -8,18 +8,24 @@ const firebaseConfig = {
     appId: "1:828630647054:web:aa4d0135a6ab904176575f"
 };
 
+console.log('Inicializando Firebase...');
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const gastosCollection = db.collection('gastos');
+
+console.log('Firebase inicializado');
 
 let perfilActual = 'elias';
 let gastos = [];
 
 // Inicializar
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+console.log('Fecha inicializada');
 
 // Cambiar perfil
 function selectPerfil(perfil) {
+    console.log('Cambiando perfil a:', perfil);
     perfilActual = perfil;
     document.querySelectorAll('.perfil-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`button[onclick="selectPerfil('${perfil}')"]`).classList.add('active');
@@ -28,6 +34,7 @@ function selectPerfil(perfil) {
 
 // Agregar gasto
 async function agregarGasto() {
+    console.log('Agregando gasto...');
     const descripcion = document.getElementById('descripcion').value.trim();
     const monto = parseFloat(document.getElementById('monto').value);
     const tipo = document.getElementById('tipo').value;
@@ -49,7 +56,10 @@ async function agregarGasto() {
         fecha: fechaInput ? new Date(fechaInput).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES')
     };
 
+    console.log('Gasto:', gasto);
+    
     await gastosCollection.add(gasto);
+    console.log('Gasto agregado a Firebase');
     
     document.getElementById('descripcion').value = '';
     document.getElementById('monto').value = '';
@@ -58,11 +68,13 @@ async function agregarGasto() {
 
 // Eliminar gasto
 async function eliminarGasto(id) {
+    console.log('Eliminando gasto:', id);
     await gastosCollection.doc(id).delete();
 }
 
 // Renderizar lista de gastos
 function renderGastos() {
+    console.log('Renderizando gastos para perfil:', perfilActual);
     const lista = document.getElementById('gastosLista');
     const gastosPerfil = gastos.filter(g => g.perfil === perfilActual);
 
@@ -109,12 +121,16 @@ function actualizarResumen() {
     document.getElementById('totalNadia').style.color = nadia >= 0 ? '#6bff8a' : '#ff6b6b';
 }
 
-// Sincronización en tiempo real
+// Sincronización en Tiempo Real
+console.log('Conectando a Firebase...');
 gastosCollection.orderBy('id', 'desc').onSnapshot((snapshot) => {
+    console.log('Datos recibidos de Firebase:', snapshot.docs.length);
     gastos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     renderGastos();
     actualizarResumen();
 }, (error) => {
-    console.error('Error:', error);
+    console.error('Error de Firebase:', error);
     alert('Error de Firebase: ' + error.message);
 });
+
+console.log('App iniciada correctamente');
