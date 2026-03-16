@@ -24,8 +24,8 @@ self.addEventListener('notificationclick', event => {
 self.addEventListener('push', event => {
     const options = {
         body: '¡No olvides registrar tus gastos del día!',
-        icon: 'icon-192.png',
-        badge: 'icon-192.png',
+        icon: 'img/icon-192.png',
+        badge: 'img/icon-192.png',
         vibrate: [200, 100, 200],
         tag: 'recordatorio-gastos',
         renotify: true,
