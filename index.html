@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gastos Mensuales</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="container">
@@ -72,8 +74,23 @@
     </div>
 
     <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-XVV-cNS8YGCeR_DaohbngUE1pyALhtw",
+            authDomain: "app-gastos-b153f.firebaseapp.com",
+            projectId: "app-gastos-b153f",
+            storageBucket: "app-gastos-b153f.firebasestorage.app",
+            messagingSenderId: "828630647054",
+            appId: "1:828630647054:web:aa4d0135a6ab904176575f"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const gastosCollection = db.collection('gastos');
+
         let perfilActual = 'elias';
-        let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
+        let gastos = [];
 
         // Inicializar
         document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
@@ -110,23 +127,21 @@
                 fecha: fechaInput ? new Date(fechaInput).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES')
             };
 
-            gastos.push(gasto);
-            localStorage.setItem('gastos', JSON.stringify(gastos));
-            
-            document.getElementById('descripcion').value = '';
-            document.getElementById('monto').value = '';
-            document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-            
-            renderGastos();
-            actualizarResumen();
+            gastosCollection.add(gasto).then(function() {
+                document.getElementById('descripcion').value = '';
+                document.getElementById('monto').value = '';
+                document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+            }).catch(function(error) {
+                console.error('Error:', error);
+                alert('Error: ' + error.message);
+            });
         });
 
         // Eliminar gasto
         function eliminarGasto(id) {
-            gastos = gastos.filter(g => g.id !== id);
-            localStorage.setItem('gastos', JSON.stringify(gastos));
-            renderGastos();
-            actualizarResumen();
+            gastosCollection.doc(id).delete().catch(function(error) {
+                console.error('Error:', error);
+            });
         }
 
         // Renderizar lista de gastos
@@ -184,9 +199,17 @@
             document.getElementById('totalNadia').style.color = nadia >= 0 ? '#6bff8a' : '#ff6b6b';
         }
 
-        // Inicializar
-        renderGastos();
-        actualizarResumen();
+        // Sincronización en tiempo real
+        gastosCollection.orderBy('id', 'desc').onSnapshot(function(snapshot) {
+            gastos = snapshot.docs.map(function(doc) {
+                return { id: doc.id, ...doc.data() };
+            });
+            renderGastos();
+            actualizarResumen();
+        }, function(error) {
+            console.error('Error de Firebase:', error);
+            alert('Error de Firebase: ' + error.message);
+        });
     </script>
 </body>
 </html>
