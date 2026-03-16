@@ -114,6 +114,30 @@ function setAlarm() {
         return;
     }
 
+    if (Notification.permission !== 'granted') {
+        solicitarPermiso();
+        return;
+    }
+
+    activarAlarmaReal(timeInput, status);
+}
+
+function solicitarPermiso() {
+    if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === 'granted') {
+                document.getElementById('permisoBtn').style.display = 'none';
+                const timeInput = document.getElementById('alarmTime').value;
+                const status = document.getElementById('alarmStatus');
+                activarAlarmaReal(timeInput, status);
+            } else {
+                alert('Necesitás dar permiso de notificaciones para la alarma');
+            }
+        });
+    }
+}
+
+function activarAlarmaReal(timeInput, status) {
     const [hours, minutes] = timeInput.split(':');
     const now = new Date();
     let alarmDate = new Date();
@@ -126,24 +150,7 @@ function setAlarm() {
     const delay = alarmDate - now;
     
     alarmTimeout = setTimeout(() => {
-        if (Notification.permission === 'granted') {
-            new Notification('Recordatorio de Gastos', {
-                body: '¡No olvides registrar tus gastos del día!',
-                icon: '💰'
-            });
-        } else if (Notification.permission !== 'denied') {
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    new Notification('Recordatorio de Gastos', {
-                        body: '¡No olvides registrar tus gastos del día!',
-                        icon: '💰'
-                    });
-                }
-            });
-        } else {
-            alert('⏰ ¡Recordatorio! No olvides registrar tus gastos del día');
-        }
-        
+        mostrarNotificacion();
         scheduleAlarm(timeInput);
     }, delay);
 
@@ -152,6 +159,18 @@ function setAlarm() {
     status.style.display = 'block';
     document.querySelector('.alarm-btn').textContent = 'Desactivar Alarma';
     alarmaActiva = true;
+}
+
+function mostrarNotificacion() {
+    if (Notification.permission === 'granted') {
+        new Notification('Recordatorio de Gastos', {
+            body: '¡No olvides registrar tus gastos del día!',
+            icon: 'img/icon-192.png',
+            tag: 'alarma-gastos'
+        });
+    } else {
+        alert('⏰ ¡Recordatorio! No olvides registrar tus gastos del día');
+    }
 }
 
 function scheduleAlarm(time) {
@@ -168,14 +187,7 @@ function scheduleAlarm(time) {
         
         const delay = alarmDate - now;
         alarmTimeout = setTimeout(() => {
-            if (Notification.permission === 'granted') {
-                new Notification('Recordatorio de Gastos', {
-                    body: '¡No olvides registrar tus gastos del día!',
-                    icon: '💰'
-                });
-            } else {
-                alert('⏰ ¡Recordatorio! No olvides registrar tus gastos del día');
-            }
+            mostrarNotificacion();
             runAlarm();
         }, delay);
     };
@@ -189,11 +201,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     if ('serviceWorker' in navigator) {
         try {
-            const registration = await navigator.serviceWorker.register('sw.js');
+            await navigator.serviceWorker.register('js/sw.js');
             console.log('SW registrado');
         } catch (e) {
             console.log('SW error:', e);
         }
+    }
+    
+    if ('Notification' in window && Notification.permission === 'default') {
+        document.getElementById('permisoBtn').style.display = 'block';
+    }
+    
+    if ('Notification' in window && Notification.permission === 'denied') {
+        alert('Las notificaciones están bloqueadas. Por favor habilítalas en Configuración > Safari > Permisos');
     }
     
     renderGastos();
@@ -202,10 +222,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const savedAlarm = localStorage.getItem('alarmTime');
     if (savedAlarm) {
         document.getElementById('alarmTime').value = savedAlarm;
-        setAlarm();
+        if (Notification.permission === 'granted') {
+            setAlarm();
+        }
     }
-    
-    requestNotificationPermission();
 });
 
 async function requestNotificationPermission() {
