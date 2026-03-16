@@ -1,0 +1,206 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.perfiles {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.perfil-btn {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #4a4a6a;
+    background: #2a2a4a;
+    color: #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.perfil-btn.active {
+    border-color: #00d9ff;
+    background: #0a3d4a;
+    box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+}
+
+.perfil-btn:nth-child(2).active {
+    border-color: #ff6b9d;
+    background: #4a0a2e;
+    box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #4a4a6a;
+    background: #2a2a4a;
+    color: #fff;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #00d9ff;
+}
+
+.btn-agregar {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00d9ff, #0099cc);
+    border: none;
+    color: #1a1a2e;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: transform 0.2s;
+}
+
+.btn-agregar:active {
+    transform: scale(0.98);
+}
+
+.resumen {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+    padding: 15px;
+    background: #2a2a4a;
+    border-radius: 12px;
+}
+
+.resumen-item {
+    text-align: center;
+}
+
+.resumen-item span {
+    display: block;
+    font-size: 0.9rem;
+    color: #8a8aaa;
+}
+
+.resumen-item strong {
+    font-size: 1.3rem;
+}
+
+.gastos-lista {
+    margin-top: 20px;
+}
+
+.gasto-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #2a2a4a;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.gasto-info {
+    flex: 1;
+}
+
+.gasto-nombre {
+    font-weight: 500;
+}
+
+.gasto-fecha {
+    font-size: 0.8rem;
+    color: #8a8aaa;
+}
+
+.gasto-monto {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ff6b6b;
+}
+
+.gasto-monto.ingreso {
+    color: #6bff8a;
+}
+
+.btn-eliminar {
+    background: #ff4757;
+    border: none;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.alarm-config {
+    background: #2a2a4a;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.alarm-config h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.alarm-config label {
+    display: block;
+    margin-bottom: 8px;
+    color: #8a8aaa;
+}
+
+.alarm-btn {
+    padding: 10px 20px;
+    background: #ff6b9d;
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.alarm-status {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #6bff8a;
+}
+
+.empty {
+    text-align: center;
+    color: #8a8aaa;
+    padding: 30px;
+}

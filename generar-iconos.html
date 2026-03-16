@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Generar Iconos</title>
+</head>
+<body>
+    <canvas id="c192" width="192" height="192"></canvas>
+    <canvas id="c512" width="512" height="512"></canvas>
+    <script>
+        function draw(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1a1a2e';
+            ctx.fillRect(0, 0, size, size);
+            ctx.fillStyle = '#00d9ff';
+            ctx.font = size * 0.5 + 'px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('💰', size/2, size/2);
+        }
+        draw(document.getElementById('c192'), 192);
+        draw(document.getElementById('c512'), 512);
+    </script>
+    <p>Click derecho en cada canvas > "Guardar imagen como" > icon-192.png y icon-512.png</p>
+</body>
+</html>
