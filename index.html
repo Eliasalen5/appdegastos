@@ -133,11 +133,15 @@ async function agregarGasto() {
         fecha: fechaInput ? new Date(fechaInput).toLocaleDateString('es-ES') : new Date().toLocaleDateString('es-ES')
     };
 
-    await gastosCollection.add(gasto);
-    
-    document.getElementById('descripcion').value = '';
-    document.getElementById('monto').value = '';
-    document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    try {
+        await gastosCollection.add(gasto);
+        document.getElementById('descripcion').value = '';
+        document.getElementById('monto').value = '';
+        document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
+    } catch (error) {
+        console.error('Error al agregar:', error);
+        alert('Error: ' + error.message);
+    }
 }
 
 async function eliminarGasto(id) {
@@ -316,6 +320,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         }));
         renderGastos();
         actualizarResumen();
+    }, (error) => {
+        console.error('Error de Firebase:', error);
+        alert('Error de Firebase: ' + error.message);
     });
     
     const savedAlarm = localStorage.getItem('alarmTime');
